@@ -70,9 +70,25 @@ def gradient(x_train,y_train,theta):
         grad[4] += (hx-y_train[i])*x_train[i][3]
         grad[5] += (hx-y_train[i])*x_train[i][4]
     return grad
+
+def batch_gradient(x_train,y_train,theta,batch_size=1):
     
+    grad = np.zeros((6,))
+    m=x_train.shape[0]
+    indices=np.arange(m)
+    np.random.shuffle(indices)
+    indices=indices[:batch_size]
+    for i in indices:
+        hx=hypothesis(x_train[i],theta)
+        grad[0] += hx-y_train[i]
+        grad[1] += (hx-y_train[i])*x_train[i][0]
+        grad[2] += (hx-y_train[i])*x_train[i][1]
+        grad[3] += (hx-y_train[i])*x_train[i][2]
+        grad[4] += (hx-y_train[i])*x_train[i][3]
+        grad[5] += (hx-y_train[i])*x_train[i][4]
+    return grad    
 ###Algorithm
-def gradientDescent(x_train,y_train,learning_rate=.0001):
+def gradientDescent(x_train,y_train,learning_rate=.001):
     theta=np.zeros((6,))
     error_list=[]
     itr = 0
@@ -80,7 +96,7 @@ def gradientDescent(x_train,y_train,learning_rate=.0001):
     e=1000
     theta_list=[]
     while(itr<max_itr):
-        grad=gradient(x_train,y_train,theta)
+        grad=batch_gradient(x_train,y_train,theta,20)
         print(grad)
         e=error(x_train,y_train,theta)
         error_list.append(e)
@@ -112,7 +128,3 @@ u=((Y_train-Y_pred)**2).sum()
 v= ((Y_train - Y_train.mean()) ** 2).sum()
 rr=(1-(u/v))
 print(rr)
-for i in range(5):
-    plt.scatter(x_test[:,i],y_pred,color='blue')
-    plt.scatter(x_test[:,i],y_test,color='Orange')
-    plt.show()
